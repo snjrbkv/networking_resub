@@ -103,7 +103,7 @@ export default function Dashboard() {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Recent Orders Somsaaa
+              Recent Orders 
             </Typography>
             {data.recentOrders.length === 0 ? (
               <Typography color="text.secondary">No orders yet.</Typography>
