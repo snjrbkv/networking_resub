@@ -1,0 +1,77 @@
+# ──────────────────────────────────────────────────────────────
+# WholesaleOS — full stack: PostgreSQL + Backend API + Frontend
+# Run with:  docker-compose up --build
+# ──────────────────────────────────────────────────────────────
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: wholesaleos_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-wholesale}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wholesale_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-wholesaleos}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-wholesale} -d ${POSTGRES_DB:-wholesaleos}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - wholesale_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wholesaleos_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-wholesale}:${POSTGRES_PASSWORD:-wholesale_secret}@db:5432/${POSTGRES_DB:-wholesaleos}?schema=public
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-change_me_access_secret_please}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-change_me_refresh_secret_please}
+      JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-300}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "${BACKEND_PORT:-4000}:4000"
+    # On startup: apply migrations, seed (idempotent), then launch the API.
+    command: sh -c "npx prisma migrate deploy && node dist/prisma/seed.js && node dist/src/server.js"
+    networks:
+      - wholesale_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000/api}
+    container_name: wholesaleos_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    networks:
+      - wholesale_net
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  wholesale_net:
+    driver: bridge
