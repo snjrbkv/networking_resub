@@ -6,15 +6,24 @@
     "lib": ["ES2021"],
     "outDir": "./dist",
     "rootDir": "./",
+
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+
     "declaration": false,
     "sourceMap": true,
-    "types": ["node"]
+
+    "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts", "prisma/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": [
+    "src/**/*.ts",
+    "prisma/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
