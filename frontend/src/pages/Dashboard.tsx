@@ -42,7 +42,9 @@ const lowerGridSx = {
 const centerSx = { display: "flex", justifyContent: "center", p: 6 };
 
 const currency = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+    n,
+  );
 
 export default function Dashboard() {
   const { data, isLoading, error } = useQuery({
@@ -59,7 +61,11 @@ export default function Dashboard() {
   }
 
   if (error || !data) {
-    return <Alert severity="error">{error ? apiError(error) : "Failed to load dashboard"}</Alert>;
+    return (
+      <Alert severity="error">
+        {error ? apiError(error) : "Failed to load dashboard"}
+      </Alert>
+    );
   }
 
   return (
@@ -67,17 +73,37 @@ export default function Dashboard() {
       <PageHeader title="Dashboard" subtitle="Business overview at a glance" />
 
       <Box sx={statsGridSx}>
-        <StatCard title="Total Products" value={data.totals.products} icon={<Inventory2Icon />} color="#1565c0" />
-        <StatCard title="Total Customers" value={data.totals.customers} icon={<PeopleIcon />} color="#00897b" />
-        <StatCard title="Total Orders" value={data.totals.orders} icon={<ReceiptLongIcon />} color="#6a1b9a" />
-        <StatCard title="Total Revenue" value={currency(data.totals.revenue)} icon={<PaidIcon />} color="#2e7d32" />
+        <StatCard
+          title="Total Products"
+          value={data.totals.products}
+          icon={<Inventory2Icon />}
+          color="#1565c0"
+        />
+        <StatCard
+          title="Total Customers"
+          value={data.totals.customers}
+          icon={<PeopleIcon />}
+          color="#00897b"
+        />
+        <StatCard
+          title="Total Orders"
+          value={data.totals.orders}
+          icon={<ReceiptLongIcon />}
+          color="#6a1b9a"
+        />
+        <StatCard
+          title="Total Revenue"
+          value={currency(data.totals.revenue)}
+          icon={<PaidIcon />}
+          color="#2e7d32"
+        />
       </Box>
 
       <Box sx={lowerGridSx}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Recent Orders Somsa
+              Recent Orders Somsaaa
             </Typography>
             {data.recentOrders.length === 0 ? (
               <Typography color="text.secondary">No orders yet.</Typography>
@@ -99,7 +125,9 @@ export default function Dashboard() {
                       <TableCell>
                         <StatusChip status={o.status as OrderStatus} />
                       </TableCell>
-                      <TableCell align="right">{currency(Number(o.totalAmount))}</TableCell>
+                      <TableCell align="right">
+                        {currency(Number(o.totalAmount))}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -111,11 +139,19 @@ export default function Dashboard() {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              <WarningAmberIcon color="warning" fontSize="small" /> Low Stock Alerts
-              <Chip size="small" label={data.lowStockCount} color="warning" sx={chipSx} />
+              <WarningAmberIcon color="warning" fontSize="small" /> Low Stock
+              Alerts
+              <Chip
+                size="small"
+                label={data.lowStockCount}
+                color="warning"
+                sx={chipSx}
+              />
             </Typography>
             {data.lowStockProducts.length === 0 ? (
-              <Typography color="text.secondary">All products are well stocked.</Typography>
+              <Typography color="text.secondary">
+                All products are well stocked.
+              </Typography>
             ) : (
               <List dense>
                 {data.lowStockProducts.map((p) => (
