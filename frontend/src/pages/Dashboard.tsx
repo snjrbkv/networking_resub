@@ -69,7 +69,7 @@ export default function Dashboard() {
 
   return (
     <Box>
-      <PageHeader title="Dashboard" subtitle="Business overview at a glance" />
+      <PageHeader title="Somsa" subtitle="Business overview at a glance" />
 
       <Box sx={statsGridSx}>
         <StatCard
@@ -102,7 +102,7 @@ export default function Dashboard() {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Recent Orders
+              Somsa Orders
             </Typography>
             {data.recentOrders.length === 0 ? (
               <Typography color="text.secondary">No orders yet.</Typography>
